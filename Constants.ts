@@ -35,4 +35,43 @@ export const AllowedHumanNeeds = [
 ] as const;
 export type HumanNeedTypes = typeof AllowedHumanNeeds[number];
 
+export const AllowedFluidType = [
+  "water",
+  "fuel",
+  "air",
+  "coolant"
+]
+export type AllowedFluidType = typeof AllowedFluidType[number];
 
+export interface FluidContainerComponent {
+  capacity: number; // Maximum capacity of the container
+  currentVolume: number; // Current volume of fluid in the container
+  fluidType?: AllowedFluidType; // Optional type of fluid contained, e.g., "water", "fuel"
+}
+
+export interface LeakageComponent {
+  leakageRate: number;
+}
+
+export interface HeatComponent {
+  temperature: number; // Current temperature of the component
+  maxTemperature: number; // Maximum safe temperature before damage occurs
+  heatGenerationRate: number; // Rate at which the component generates heat
+  heatDissipationRate: number; // Rate at which the component dissipates heat
+}
+
+export const AllowedConnectionTypes = [
+  "fluid",
+  "power"
+]
+export type AllowedConnectionTypes = typeof AllowedConnectionTypes[number];
+
+export interface ConnectionComponent {
+  connections: {
+    targetEntityId: string; // ID of the entity this component connects to
+    direction: "in" | "out"; // Direction of the connection
+    connectionType: AllowedConnectionTypes; // Type of connection, e.g., "fluid", "power"
+    flowRate?: number;
+    fluidType?: AllowedFluidType; // Optional type of fluid for fluid connections
+  }[];
+}

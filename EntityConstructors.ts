@@ -6,6 +6,10 @@ import {
   Needs,
   Health,
   Task,
+  FluidContainer,
+  Leakage,
+  Heat,
+  Connection
 } from './Components';
 import { HumanTraitTypes, SkillTypes } from './Constants';
 
@@ -40,4 +44,34 @@ export function createHuman(
 export function createReactor(world: World, name: string) {
   return world.createEntity()
     .addComponent("Identity", Identity(name, "Reactor"));
+}
+
+
+export function createRadiator(world: World, name: string, fluidResevoir: number = 100, heatCapacity: number = 100, heatDissipationRate: number = 10) {
+  return world.createEntity()
+    .addComponent("Identity", Identity(name, "Radiator"))
+    .addComponent("FluidContainer", FluidContainer(fluidResevoir, fluidResevoir, "coolant"))
+    .addComponent("Leakage", Leakage(0))
+    .addComponent("Heat", Heat(20, heatCapacity, 0, heatDissipationRate)) 
+}
+
+export function createPipe(
+  world: World,
+  name: string,
+  fluidType: string,
+  capacity: number = 100,
+  connections: Array<{
+    targetEntityId: string;
+    direction: "in" | "out";
+    connectionType: "fluid" | "power";
+    flowRate?: number;
+    fluidType?: string;
+  }> = []
+) {
+  return world.createEntity()
+    .addComponent("Identity", Identity(name, "Pipe"))
+    .addComponent("FluidContainer", FluidContainer(capacity, capacity, fluidType))
+    .addComponent("Leakage", Leakage(0))
+    .addComponent("Heat", Heat(20, 100, 0, 0))
+    .addComponent("Connection", Connection(connections));
 }

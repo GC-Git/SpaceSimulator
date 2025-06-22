@@ -3,7 +3,13 @@ import {
   AllowedHumanTraits,
   SkillTypes,
   HumanTraitTypes,
-  HumanNeedTypes
+  HumanNeedTypes,
+  AllowedFluidType,
+  AllowedConnectionTypes,
+  HeatComponent,
+  FluidContainerComponent,
+  LeakageComponent,
+  ConnectionComponent
 } from "./Constants";
 
 // --- Components ---
@@ -55,3 +61,35 @@ export function Task(task: string | null = null) {
   return { task };
 }
 
+export function Heat(
+  temperature: number = 20,
+  maxTemperature: number = 100,
+  heatGenerationRate: number = 1,
+  heatDissipationRate: number = 0.5
+): HeatComponent {
+  return { temperature, maxTemperature, heatGenerationRate, heatDissipationRate };
+}
+
+export function FluidContainer(
+  capacity: number = 100,
+  currentVolume: number = 0,
+  fluidType?: AllowedFluidType
+): FluidContainerComponent {
+  return { capacity, currentVolume, fluidType };
+}
+
+export function Leakage(leakageRate: number = 0): LeakageComponent {
+  return { leakageRate };
+}
+
+export function Connection(
+  connections: Array<{ 
+    targetEntityId: string;
+    direction: "in" | "out";
+    flowRate?: number; 
+    connectionType: AllowedConnectionTypes;
+    fluidType?: AllowedFluidType;
+  }> = []
+): ConnectionComponent {
+  return { connections };
+}
