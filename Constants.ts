@@ -35,13 +35,20 @@ export const AllowedHumanNeeds = [
 ] as const;
 export type HumanNeedTypes = typeof AllowedHumanNeeds[number];
 
-export const AllowedFluidType = [
-  "water",
-  "fuel",
-  "air",
-  "coolant"
-]
-export type AllowedFluidType = typeof AllowedFluidType[number];
+export interface FluidPropertyTypes {
+  name: string;
+  thermalConductivity: number; // How well the fluid conducts heat
+  specificHeat: number; // How much heat the fluid can store per unit mass
+}
+
+export const FluidTypes = {
+  water: { name: "water", thermalConductivity: 0.606, specificHeat: 4.186 },
+  fuel: { name: "fuel", thermalConductivity: 0.12, specificHeat: 2.1 },
+  air: { name: "air", thermalConductivity: 0.0257, specificHeat: 1.005 },
+  coolant: { name: "coolant", thermalConductivity: 0.5, specificHeat: 3.8 },
+}
+
+export type AllowedFluidType = keyof typeof FluidTypes;
 
 export interface FluidContainerComponent {
   capacity: number; // Maximum capacity of the container
@@ -53,11 +60,25 @@ export interface LeakageComponent {
   leakageRate: number;
 }
 
+export const InsulationTypes = {
+  fiberglass: { name: "fiberglass", thermalConductivity: 0.04, durability: 0.8 },
+  foam: { name: "foam", thermalConductivity: 0.03, durability: 0.9 },
+  cellulose: { name: "cellulose", thermalConductivity: 0.05, durability: 0.7 },
+  rockwool: { name: "rockwool", thermalConductivity: 0.035, durability: 0.85 },
+  aerogel: { name: "aerogel", thermalConductivity: 0.013, durability: 0.95 },
+}
+export type AllowedInsulationType = keyof typeof InsulationTypes;
+
+export interface InsulationComponent {
+  material: AllowedInsulationType; // Type of insulation material used
+  thickness: number; // Thickness of the insulation layer
+  integrity: number; // Integrity of the insulation, representing how well it prevents heat transfer
+}
+
 export interface HeatComponent {
   temperature: number; // Current temperature of the component
   maxTemperature: number; // Maximum safe temperature before damage occurs
   heatGenerationRate: number; // Rate at which the component generates heat
-  heatDissipationRate: number; // Rate at which the component dissipates heat
 }
 
 export const AllowedConnectionTypes = [
@@ -74,4 +95,13 @@ export interface ConnectionComponent {
     flowRate?: number;
     fluidType?: AllowedFluidType; // Optional type of fluid for fluid connections
   }[];
+}
+
+export interface SubEntitiesComponent {
+  subEntityIds: Array<string |number>; // List of sub-entity IDs that this entity contains
+}
+
+export interface HitPointsComponent {
+  current: number; // Current hit points of the entity
+  maxValue: number; // Maximum hit points the entity can have
 }

@@ -4,12 +4,17 @@ import {
   SkillTypes,
   HumanTraitTypes,
   HumanNeedTypes,
+  FluidTypes,
   AllowedFluidType,
   AllowedConnectionTypes,
   HeatComponent,
   FluidContainerComponent,
   LeakageComponent,
-  ConnectionComponent
+  ConnectionComponent,
+  InsulationComponent,
+  AllowedInsulationType,
+  SubEntitiesComponent,
+  HitPointsComponent
 } from "./Constants";
 
 // --- Components ---
@@ -24,6 +29,13 @@ export function HumanTraits(input: Partial<Record<HumanTraitTypes, number>> = {}
     bravery: input.bravery ?? 0,
     paranoia: input.paranoia ?? 0
   };
+}
+
+export function HitPoints(
+  current: number = 10,
+  maxValue: number = 10,
+): HitPointsComponent {
+  return { current, maxValue};
 }
 
 export function Traits<T extends string>(
@@ -65,14 +77,13 @@ export function Heat(
   temperature: number = 20,
   maxTemperature: number = 100,
   heatGenerationRate: number = 1,
-  heatDissipationRate: number = 0.5
 ): HeatComponent {
-  return { temperature, maxTemperature, heatGenerationRate, heatDissipationRate };
+  return { temperature, maxTemperature, heatGenerationRate};
 }
 
 export function FluidContainer(
   capacity: number = 100,
-  currentVolume: number = 0,
+  currentVolume: number = 100,
   fluidType?: AllowedFluidType
 ): FluidContainerComponent {
   return { capacity, currentVolume, fluidType };
@@ -92,4 +103,16 @@ export function Connection(
   }> = []
 ): ConnectionComponent {
   return { connections };
+}
+
+export function Insulation(
+  material: AllowedInsulationType = "foam",
+  thickness: number = 0.1,
+  integrity: number = 1.0
+): InsulationComponent {
+  return { material, thickness, integrity };
+}
+
+export function SubEntities(subEntityIds: Array<string | number> = []) : SubEntitiesComponent {
+  return { subEntityIds };
 }

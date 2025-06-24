@@ -9,9 +9,19 @@ import {
   FluidContainer,
   Leakage,
   Heat,
-  Connection
+  Connection,
+  Insulation,
+  SubEntities,
+  HitPoints
 } from './Components';
-import { HumanTraitTypes, SkillTypes } from './Constants';
+import {   
+  AllowedFluidType,
+  FluidTypes,
+  HumanTraitTypes, 
+  SkillTypes,
+  AllowedInsulationType,
+  InsulationTypes,
+} from './Constants';
 
 // Define the World interface minimally for typing (expand as needed)
 interface World {
@@ -20,6 +30,7 @@ interface World {
 
 // Define the EntityBuilder interface for chaining addComponent
 interface EntityBuilder {
+  id: number | string;
   addComponent(name: string, component: any): EntityBuilder;
 }
 
@@ -47,31 +58,64 @@ export function createReactor(world: World, name: string) {
 }
 
 
-export function createRadiator(world: World, name: string, fluidResevoir: number = 100, heatCapacity: number = 100, heatDissipationRate: number = 10) {
+export function createRadiator(world: World, name: string, fluidResevoir: number = 100, heatCapacity: number = 100) {
   return world.createEntity()
     .addComponent("Identity", Identity(name, "Radiator"))
     .addComponent("FluidContainer", FluidContainer(fluidResevoir, fluidResevoir, "coolant"))
     .addComponent("Leakage", Leakage(0))
-    .addComponent("Heat", Heat(20, heatCapacity, 0, heatDissipationRate)) 
+    .addComponent("Heat", Heat(20, heatCapacity, 0)) 
 }
 
-export function createPipe(
+export function createInsulatedPipe(
   world: World,
   name: string,
-  fluidType: string,
+  fluidType: AllowedFluidType = "coolant",
+  insulationType: AllowedInsulationType = "fiberglass",
+) {
+  // 1. Create the parent pipe entity first
+  const pipe = world.createEntity();
+
+  // 2. Add components, using pipe.id for naming
+  pipe
+    .addComponent("Identity", Identity(`${name} ${pipe.id}`, `${insulationType} Insulated Pipe`))
+    .addComponent("HitPoints", HitPoints(100, 100));
+
+  // 3. Create sub-entities using pipe.id in their names
+  const pipeWall = world.createEntity()
+    .addComponent("Identity", Identity(`${name} ${pipe.id} Wall`, `${insulationType} Pipe Wall`))
+    .addComponent("Insulation", Insulation(insulationType, 0.2, 1))
+    .addComponent("Heat", Heat(20, 100, 0));
+
+  const pipeFluid = world.createEntity()
+    .addComponent("Identity", Identity(`${name} ${pipe.id} Fluid`, "Internal Pipe Fluid"))
+    .addComponent("FluidContainer", FluidContainer(100, 100, fluidType))
+    .addComponent("Leakage", Leakage(0))
+    .addComponent("Heat", Heat(20, 100, 0));
+
+  // 4. Add sub-entities to the parent pipe
+  pipe.addComponent("SubEntities", SubEntities([pipeWall.id, pipeFluid.id]));
+
+  // 5. Return the parent pipe entity if needed
+  return pipe;
+}
+
+export function createPipeOLD(
+  world: World,
+  name: string,
+  fluidType: AllowedFluidType,
   capacity: number = 100,
   connections: Array<{
     targetEntityId: string;
     direction: "in" | "out";
     connectionType: "fluid" | "power";
     flowRate?: number;
-    fluidType?: string;
+    fluidType?: AllowedFluidType;
   }> = []
 ) {
   return world.createEntity()
     .addComponent("Identity", Identity(name, "Pipe"))
     .addComponent("FluidContainer", FluidContainer(capacity, capacity, fluidType))
     .addComponent("Leakage", Leakage(0))
-    .addComponent("Heat", Heat(20, 100, 0, 0))
+    .addComponent("Heat", Heat(20, 100, 0))
     .addComponent("Connection", Connection(connections));
 }

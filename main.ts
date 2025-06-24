@@ -5,6 +5,7 @@
 // import NeedsSystem from './systems/NeedsSystem';
 import LogSystem from './systems/LogSystem';
 import * as EntityConstructors from './EntityConstructors';
+import { log } from 'console';
 // import HungerSystem from './systems/HungerSystem';
 // import FatigueSystem from './systems/FatigueSystem';
 
@@ -103,11 +104,7 @@ const world = new World();
 // EntityConstructors.createHuman(world, "Alice", "Pilot", { bravery: 7, paranoia: 3 }, { maintenance: 2, medical: 5 });
 // EntityConstructors.createHuman(world, "Bob", "Engineer", { bravery: 6, paranoia: 4 }, { maintenance: 8, medical: 2 });
 
-EntityConstructors.createReactor(world, "Main Reactor");
-EntityConstructors.createRadiator(world, "Reactor Radiator", 100, 100, 10);
-EntityConstructors.createPipe(world, "Reactor to Radiator Pipe", "coolant", 60, [
-    { targetEntityId: "Reactor Radiator", direction: "out", connectionType: "fluid", flowRate: 20, fluidType: "coolant" }
-]);
+EntityConstructors.createInsulatedPipe(world, "Test Pipe", "coolant", "fiberglass");
 
 // Add systems
 // world.addSystem(NeedsSystem);
@@ -122,4 +119,16 @@ EntityConstructors.createPipe(world, "Reactor to Radiator Pipe", "coolant", 60, 
 // Simulate 200 ticks, 1 per 2 seconds
 runSimulation(world, 200, 2000);
 
-console.log(world.entities);
+logAllEntities(world);
+
+function logAllEntities(world: World): void {
+  console.log("=== Entity Dump ===");
+  world.entities.forEach((entity, id) => {
+    console.log(`Entity ID: ${id}`);
+    entity.components.forEach((componentData, componentName) => {
+      console.log(`  Component: ${componentName}`);
+      console.log(`    Data:`, JSON.stringify(componentData, null, 2));
+    });
+    console.log('-------------------');
+  });
+}
