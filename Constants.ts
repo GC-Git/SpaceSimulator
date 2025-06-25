@@ -81,20 +81,28 @@ export interface HeatComponent {
   heatGenerationRate: number; // Rate at which the component generates heat
 }
 
+
+export interface HeatRadiatorComponent extends HeatComponent {
+  heatDissipationRate: number; // Rate at which the radiator dissipates heat
+  efficiency: number; // Efficiency of the radiator in transferring heat away
+}
+
+
 export const AllowedConnectionTypes = [
   "fluid",
-  "power"
 ]
 export type AllowedConnectionTypes = typeof AllowedConnectionTypes[number];
 
-export interface ConnectionComponent {
-  connections: {
-    targetEntityId: string; // ID of the entity this component connects to
-    direction: "in" | "out"; // Direction of the connection
-    connectionType: AllowedConnectionTypes; // Type of connection, e.g., "fluid", "power"
-    flowRate?: number;
-    fluidType?: AllowedFluidType; // Optional type of fluid for fluid connections
-  }[];
+export interface BaseConnectionComponent {
+  targetEntityId: string; // ID of the entity this component connects to
+  direction: "in" | "out"; // Direction of the connection
+  connectionType: AllowedConnectionTypes; // Type of connection, e.g., "fluid", "power"
+}
+
+export interface FluidConnectionComponent extends BaseConnectionComponent {
+  connectionType: "fluid";
+  flowRate: number;
+  fluidType?: AllowedFluidType;
 }
 
 export interface SubEntitiesComponent {

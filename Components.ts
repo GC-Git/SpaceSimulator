@@ -10,11 +10,13 @@ import {
   HeatComponent,
   FluidContainerComponent,
   LeakageComponent,
-  ConnectionComponent,
+  BaseConnectionComponent,
+  FluidConnectionComponent,
   InsulationComponent,
   AllowedInsulationType,
   SubEntitiesComponent,
-  HitPointsComponent
+  HitPointsComponent,
+  HeatRadiatorComponent,
 } from "./Constants";
 
 // --- Components ---
@@ -81,6 +83,22 @@ export function Heat(
   return { temperature, maxTemperature, heatGenerationRate};
 }
 
+export function HeatRadiator(
+  temperature: number = 20,
+  maxTemperature: number = 100,
+  heatDissipationRate: number = 20,
+  heatGenerationRate: number = 0,
+  efficiency: number = 1.0)
+  : HeatRadiatorComponent {
+  return {
+    temperature,
+    maxTemperature,
+    heatDissipationRate,
+    heatGenerationRate,
+    efficiency
+  };
+}
+
 export function FluidContainer(
   capacity: number = 100,
   currentVolume: number = 100,
@@ -93,16 +111,19 @@ export function Leakage(leakageRate: number = 0): LeakageComponent {
   return { leakageRate };
 }
 
-export function Connection(
-  connections: Array<{ 
-    targetEntityId: string;
-    direction: "in" | "out";
-    flowRate?: number; 
-    connectionType: AllowedConnectionTypes;
-    fluidType?: AllowedFluidType;
-  }> = []
-): ConnectionComponent {
-  return { connections };
+export function FluidConnection(
+  targetEntityId: string,
+  direction: "in" | "out",
+  flowRate: number,
+  fluidType?: AllowedFluidType
+): FluidConnectionComponent {
+  return {
+    targetEntityId,
+    direction,
+    connectionType: "fluid",
+    flowRate,
+    fluidType
+  };
 }
 
 export function Insulation(

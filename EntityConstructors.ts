@@ -9,10 +9,11 @@ import {
   FluidContainer,
   Leakage,
   Heat,
-  Connection,
   Insulation,
   SubEntities,
-  HitPoints
+  HitPoints,
+  HeatRadiator,
+  FluidConnection
 } from './Components';
 import {   
   AllowedFluidType,
@@ -21,6 +22,7 @@ import {
   SkillTypes,
   AllowedInsulationType,
   InsulationTypes,
+  AllowedConnectionTypes
 } from './Constants';
 
 // Define the World interface minimally for typing (expand as needed)
@@ -57,15 +59,6 @@ export function createReactor(world: World, name: string) {
     .addComponent("Identity", Identity(name, "Reactor"));
 }
 
-
-export function createRadiator(world: World, name: string, fluidResevoir: number = 100, heatCapacity: number = 100) {
-  return world.createEntity()
-    .addComponent("Identity", Identity(name, "Radiator"))
-    .addComponent("FluidContainer", FluidContainer(fluidResevoir, fluidResevoir, "coolant"))
-    .addComponent("Leakage", Leakage(0))
-    .addComponent("Heat", Heat(20, heatCapacity, 0)) 
-}
-
 export function createInsulatedPipe(
   world: World,
   name: string,
@@ -99,23 +92,16 @@ export function createInsulatedPipe(
   return pipe;
 }
 
-export function createPipeOLD(
+export function createHeatRadiator(
   world: World,
   name: string,
-  fluidType: AllowedFluidType,
-  capacity: number = 100,
-  connections: Array<{
-    targetEntityId: string;
-    direction: "in" | "out";
-    connectionType: "fluid" | "power";
-    flowRate?: number;
-    fluidType?: AllowedFluidType;
-  }> = []
+  heatCapacity: number = 1000,
+  hitPoints: number = 100,
+  fluidType: AllowedFluidType = "coolant"
 ) {
   return world.createEntity()
-    .addComponent("Identity", Identity(name, "Pipe"))
-    .addComponent("FluidContainer", FluidContainer(capacity, capacity, fluidType))
-    .addComponent("Leakage", Leakage(0))
-    .addComponent("Heat", Heat(20, 100, 0))
-    .addComponent("Connection", Connection(connections));
+    .addComponent("Identity", Identity(name, "Heat Radiator"))
+    .addComponent("HitPoints", HitPoints(100, 100))
+    .addComponent("HeatRadiator", HeatRadiator(heatCapacity))
+    .addComponent("FluidContainer", FluidContainer(100, 100, fluidType))
 }

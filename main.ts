@@ -104,7 +104,10 @@ const world = new World();
 // EntityConstructors.createHuman(world, "Alice", "Pilot", { bravery: 7, paranoia: 3 }, { maintenance: 2, medical: 5 });
 // EntityConstructors.createHuman(world, "Bob", "Engineer", { bravery: 6, paranoia: 4 }, { maintenance: 8, medical: 2 });
 
+// TODO: Figure out how to actually connect the two entities.
 EntityConstructors.createInsulatedPipe(world, "Test Pipe", "coolant", "fiberglass");
+
+EntityConstructors.createHeatRadiator(world, "Test Radiator", 1000, 100, "coolant",);
 
 // Add systems
 // world.addSystem(NeedsSystem);
